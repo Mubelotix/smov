@@ -8,29 +8,32 @@ import { isExtensionActiveCached } from "@/backend/extension/messaging";
 import {
   makeExtensionFetcher,
   makeLoadBalancedSimpleProxyFetcher,
+  makeMantalonFetcher,
 } from "@/backend/providers/fetchers";
 
 export function getProviders() {
-  if (isExtensionActiveCached()) {
-    return makeProviders({
-      fetcher: makeStandardFetcher(fetch),
-      proxiedFetcher: makeExtensionFetcher(),
-      target: targets.BROWSER_EXTENSION,
-      consistentIpForRequests: true,
-    });
-  }
+  // TODO
+  // if (isExtensionActiveCached()) {
+  //   return makeProviders({
+  //     fetcher: makeStandardFetcher(fetch),
+  //     proxiedFetcher: makeExtensionFetcher(),
+  //     target: targets.BROWSER_EXTENSION,
+  //     consistentIpForRequests: true,
+  //   });
+  // }
 
   return makeProviders({
     fetcher: makeStandardFetcher(fetch),
-    proxiedFetcher: makeLoadBalancedSimpleProxyFetcher(),
-    target: targets.BROWSER,
+    proxiedFetcher: makeMantalonFetcher(),
+    target: targets.ANY,
+    consistentIpForRequests: true,
   });
 }
 
 export function getAllProviders() {
   return makeProviders({
     fetcher: makeStandardFetcher(fetch),
-    target: targets.BROWSER_EXTENSION,
-    consistentIpForRequests: true,
+    target: targets.ANY,
+    consistentIpForRequests: true
   });
 }
