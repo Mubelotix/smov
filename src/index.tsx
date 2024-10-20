@@ -36,18 +36,42 @@ import {
 } from "./backend/extension/messaging";
 import { initializeChromecast } from "./setup/chromecast";
 import { initializeOldStores } from "./stores/__old/migrations";
+import { getLoadbalancedProxyUrl } from "./backend/providers/fetchers";
 
 // initialize
 initializeChromecast();
 
 console.log("INIT");
+let serviceWorkerUrl = import.meta.env.MODE === 'production' ? '/sw.js' : '/dev-sw.js?dev-sw';
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register(
-    import.meta.env.MODE === 'production' ? '/sw.js' : '/dev-sw.js?dev-sw',
-    {
-      scope: '/mantalon',
-    }
-  )
+  navigator.serviceWorker
+    .register(serviceWorkerUrl, { scope: '/mantalon' })
+    .then((registration) => {
+      console.log("Service worker registration succeeded:", registration);
+      
+      return new Promise<ServiceWorkerRegistration>((resolve) => {
+        if (registration.installing) {
+          registration.installing.addEventListener('statechange', function() {
+            if (this.state === 'activated') {
+              resolve(registration);
+            }
+          });
+        } else if (registration.active) {
+          resolve(registration);
+        }
+      });
+    })
+    .then((registration) => {
+      console.log("Service worker is active:", registration.active);
+      
+      registration.active?.postMessage({
+        type: "PROXY_URL",
+        url: getLoadbalancedProxyUrl(),
+      });
+    })
+    .catch((error) => {
+      console.error('Service Worker registration failed:', error);
+    });
 }
 
 function LoadingScreen(props: { type: "user" | "lazy" }) {
