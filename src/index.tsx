@@ -45,7 +45,7 @@ console.log("INIT");
 let serviceWorkerUrl = import.meta.env.MODE === 'production' ? '/sw.js' : '/dev-sw.js?dev-sw';
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker
-    .register(serviceWorkerUrl, { scope: '/mantalon' })
+    .register(serviceWorkerUrl)
     .then((registration) => {
       console.log("Service worker registration succeeded:", registration);
       

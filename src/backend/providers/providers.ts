@@ -12,15 +12,23 @@ import {
 } from "@/backend/providers/fetchers";
 
 export function getProviders() {
-  // TODO
-  // if (isExtensionActiveCached()) {
-  //   return makeProviders({
-  //     fetcher: makeStandardFetcher(fetch),
-  //     proxiedFetcher: makeExtensionFetcher(),
-  //     target: targets.BROWSER_EXTENSION,
-  //     consistentIpForRequests: true,
-  //   });
-  // }
+  if ('serviceWorker' in navigator) {
+    return makeProviders({
+      fetcher: makeStandardFetcher(fetch),
+      proxiedFetcher: makeMantalonFetcher(),
+      target: targets.ANY,
+      consistentIpForRequests: true,
+    });
+  }
+
+  if (isExtensionActiveCached()) {
+    return makeProviders({
+      fetcher: makeStandardFetcher(fetch),
+      proxiedFetcher: makeExtensionFetcher(),
+      target: targets.BROWSER_EXTENSION,
+      consistentIpForRequests: true,
+    });
+  }
 
   return makeProviders({
     fetcher: makeStandardFetcher(fetch),

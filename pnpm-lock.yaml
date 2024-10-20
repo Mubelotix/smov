@@ -103,8 +103,8 @@ importers:
         specifier: ^4.6.2
         version: 4.6.2
       mantalon-client:
-        specifier: ^0.1.3
-        version: 0.1.3
+        specifier: ^0.1.4
+        version: 0.1.4
       million:
         specifier: ^2.6.4
         version: 2.6.4(webpack-sources@3.2.3)
@@ -3370,8 +3370,8 @@ packages:
   magic-string@0.30.11:
     resolution: {integrity: sha512-+Wri9p0QHMy+545hKww7YAu5NyzF8iomPL/RQazugQ9+Ez4Ic3mERMd8ZTX5rfK944j+560ZJi8iAwgak1Ac7A==}
 
-  mantalon-client@0.1.3:
-    resolution: {integrity: sha512-zv6XhaBfvtb7adSc/hs28rz4CCLQB0JXt+ptTiwJEuG5uX2MyIMK4qIOYj+qI5Uhzz5jHGz+NOY4FK7WNiZVMg==}
+  mantalon-client@0.1.4:
+    resolution: {integrity: sha512-Qx7gpB+dPplY3frL4gwCTupfPyFq3EPV72jVU84jygY96J+bfAmoGajE9+DONzAHbutC5fgAaXN6yKI6Pdym7Q==}
 
   mdn-data@2.0.14:
     resolution: {integrity: sha512-dn6wd0uw5GsdswPFfsgMp5NSB0/aDe6fK94YJV/AJDYXL6HVLWBsxeq7js7Ad+mU2K9LAlwpk6kN2D5mwCPVow==}
@@ -8455,7 +8455,7 @@ snapshots:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.0
 
-  mantalon-client@0.1.3: {}
+  mantalon-client@0.1.4: {}
 
   mdn-data@2.0.14: {}
 

@@ -1,7 +1,40 @@
 var PROXY_URL = undefined;
 
 self.addEventListener("fetch", (event) => {
-    event.respondWith(proxiedFetch(event.request));
+    if (!event.request.url.includes("/mantalon")) {
+        event.respondWith(fetch(event.request));
+        return;
+    }
+    
+    const destination = new URL(event.request.url).searchParams.get("destination");
+
+    if (!destination) {
+        event.respondWith(fetch(event.request));
+        return;
+    }
+
+    console.log("Fetch intercepted for:", destination);
+
+    event.respondWith(
+        self.proxiedFetch(destination, {
+            method: event.request.method,
+            headers: event.request.headers,
+            body: event.request.body,
+        })
+            .then((response) => {
+                // Return the response from proxiedFetch if successful
+                return response;
+            })
+            .catch((error) => {
+                console.error("Proxied fetch failed:", error);
+
+                // Provide a fallback response in case of an error
+                return new Response("Something went wrong with the proxied fetch.", {
+                    status: 500,
+                    statusText: `Error: ${error}`,
+                });
+            })
+    );
 });
 
 self.addEventListener('install', function(event) {
