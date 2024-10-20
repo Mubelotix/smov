@@ -1,22 +1,20 @@
 var PROXY_URL = undefined;
 
 self.addEventListener("fetch", (event) => {
-    if (!event.request.url.includes("/mantalon")) {
-        event.respondWith(fetch(event.request));
-        return;
-    }
+    let url = new URL(event.request.url);
+    let searchParams = new URLSearchParams(url.search);
     
-    const destination = new URL(event.request.url).searchParams.get("destination");
-
-    if (!destination) {
+    if (searchParams.get("mantalon") !== "true") {
         event.respondWith(fetch(event.request));
         return;
     }
 
-    console.log("Fetch intercepted for:", destination);
+    searchParams.delete("mantalon");
+    url.search = searchParams.toString();
 
+    console.log("Fetch intercepted for:", url);
     event.respondWith(
-        self.proxiedFetch(destination, {
+        self.proxiedFetch(url, {
             method: event.request.method,
             headers: event.request.headers,
             body: event.request.body,

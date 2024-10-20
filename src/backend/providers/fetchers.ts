@@ -158,17 +158,10 @@ export function makeMantalonFetcher(): Fetcher {
       return entry;
     });
 
-
-    console.log('mantalon fetch', fullUrl);
-
-    let this_domain = window.location.hostname;
-    let this_protocol = window.location.protocol;
-    let this_port = window.location.port;
-    let this_url = this_protocol + '//' + this_domain + (this_port ? ':' + this_port : '');
-    return fetcher(this_url + "/mantalon", {
+    return fetcher(fullUrl, {
       ...ops,
       query: {
-        destination: fullUrl,
+        mantalon: "true",
       },
       headers: Object.fromEntries(headerEntries),
       baseUrl: undefined,
