@@ -11,6 +11,7 @@ import { visualizer } from "rollup-plugin-visualizer";
 
 import tailwind from "tailwindcss";
 import rtl from "postcss-rtlcss";
+import { viteStaticCopy } from "vite-plugin-static-copy";
 
 const captioningPackages = [
   "dompurify",
@@ -56,7 +57,7 @@ export default defineConfig(({ mode }) => {
       }),
       VitePWA({
         srcDir: "src",
-        filename: "service-worker.ts",
+        filename: "sw.js",
         strategies: "injectManifest",
         injectRegister: false,
         manifest: false,
@@ -115,6 +116,17 @@ export default defineConfig(({ mode }) => {
           ],
         },
       }),
+      viteStaticCopy({
+        targets: [
+          {
+            src: [
+              "node_modules/mantalon-client/mantalon_client_bg.wasm",
+              "node_modules/mantalon-client/mantalon_client.js",
+            ],
+            dest: "mantalon-lib",
+          },
+        ],
+      }),
       loadVersion(),
       // checker({
       //   overlay: {
@@ -136,12 +148,6 @@ export default defineConfig(({ mode }) => {
     build: {
       sourcemap: true,
       rollupOptions: {
-        // input: {
-        //   'sw': resolve(__dirname, 'src/sw.ts'),  // include service worker
-        // },
-        // output: {
-        //   entryFileNames: '[name].js',  // output as sw.js
-        // },  
         output: {},
         manualChunks(id: string) {
           if (id.includes("@sozialhelden+ietf-language-tags") || id.includes("country-language")) {
