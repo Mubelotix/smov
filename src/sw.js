@@ -38,6 +38,27 @@ self.addEventListener("fetch", (event) => {
             body: event.request.body,
         })
             .then((response) => {
+                // If that is a redirect, we need to update the location header
+                if (response.headers.has("location")) {
+                    let location = response.headers.get("location");
+                    if (location.includes("?")) {
+                        location += "&mantalon=true";
+                    } else {
+                        location += "?mantalon=true";
+                    }
+
+                    let newRespHeaders = new Headers();
+                    for (let [key, value] of response.headers.entries()) {
+                        newRespHeaders.append(key, value);
+                    }
+                    newRespHeaders.set("location", location);
+
+                    return new Response(response.body, {
+                        status: response.status,
+                        headers: newRespHeaders,
+                    });
+                }
+
                 // Return the response from proxiedFetch if successful
                 return response;
             })
