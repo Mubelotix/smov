@@ -41,6 +41,7 @@ export function getProviders() {
 export function getAllProviders() {
   return makeProviders({
     fetcher: makeStandardFetcher(fetch),
+    externalSources: "all",
     target: targets.ANY,
     consistentIpForRequests: true
   });
