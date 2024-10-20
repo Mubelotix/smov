@@ -3,7 +3,7 @@ import react from "@vitejs/plugin-react";
 import loadVersion from "vite-plugin-package-version";
 import { VitePWA } from "vite-plugin-pwa";
 import checker from "vite-plugin-checker";
-import path from "path";
+import path, { resolve } from "path";
 import million from 'million/compiler';
 import { handlebars } from "./plugins/handlebars";
 import { PluginOption, loadEnv, splitVendorChunkPlugin } from "vite";
@@ -55,6 +55,19 @@ export default defineConfig(({ mode }) => {
         },
       }),
       VitePWA({
+        srcDir: "src",
+        filename: "service-worker.ts",
+        strategies: "injectManifest",
+        injectRegister: false,
+        manifest: false,
+        injectManifest: {
+          injectionPoint: undefined,
+        },
+        devOptions: {
+          enabled: true,
+        },
+      }),
+      VitePWA({
         disable: env.VITE_PWA_ENABLED !== "true",
         registerType: "autoUpdate",
         workbox: {
@@ -103,19 +116,19 @@ export default defineConfig(({ mode }) => {
         },
       }),
       loadVersion(),
-      checker({
-        overlay: {
-          position: "tr",
-        },
-        typescript: true, // check typescript build errors in dev server
-        eslint: {
-          // check lint errors in dev server
-          lintCommand: "eslint --ext .tsx,.ts src",
-          dev: {
-            logLevel: ["error"],
-          },
-        },
-      }),
+      // checker({
+      //   overlay: {
+      //     position: "tr",
+      //   },
+      //   typescript: true, // check typescript build errors in dev server
+      //   eslint: {
+      //     // check lint errors in dev server
+      //     lintCommand: "eslint --ext .tsx,.ts src",
+      //     dev: {
+      //       logLevel: ["error"],
+      //     },
+      //   },
+      // }),
       splitVendorChunkPlugin(),
       visualizer() as PluginOption
     ],
@@ -123,6 +136,12 @@ export default defineConfig(({ mode }) => {
     build: {
       sourcemap: true,
       rollupOptions: {
+        // input: {
+        //   'sw': resolve(__dirname, 'src/sw.ts'),  // include service worker
+        // },
+        // output: {
+        //   entryFileNames: '[name].js',  // output as sw.js
+        // },  
         output: {},
         manualChunks(id: string) {
           if (id.includes("@sozialhelden+ietf-language-tags") || id.includes("country-language")) {

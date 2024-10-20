@@ -40,6 +40,13 @@ import { initializeOldStores } from "./stores/__old/migrations";
 // initialize
 initializeChromecast();
 
+console.log("INIT");
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register(
+    import.meta.env.MODE === 'production' ? '/service-worker.js' : '/dev-sw.js?dev-sw'
+  )
+}
+
 function LoadingScreen(props: { type: "user" | "lazy" }) {
   const mapping = {
     user: "screens.loadingUser",
