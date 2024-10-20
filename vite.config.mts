@@ -11,6 +11,7 @@ import { visualizer } from "rollup-plugin-visualizer";
 
 import tailwind from "tailwindcss";
 import rtl from "postcss-rtlcss";
+import { viteStaticCopy } from "vite-plugin-static-copy";
 
 const captioningPackages = [
   "dompurify",
@@ -102,6 +103,11 @@ export default defineConfig(({ mode }) => {
           ],
         },
       }),
+      VitePWA({
+        injectRegister: 'script',
+        filename: 'sw.js',
+        scope: '/mantalon',
+      }),  
       loadVersion(),
       checker({
         overlay: {
@@ -117,7 +123,20 @@ export default defineConfig(({ mode }) => {
         },
       }),
       splitVendorChunkPlugin(),
-      visualizer() as PluginOption
+      visualizer() as PluginOption,
+      viteStaticCopy({
+        targets: [
+          {
+            src: 'node_modules/mantalon-client/mantalon_client_bg.wasm',
+            dest: 'assets',
+          },
+          {
+            src: 'node_modules/mantalon-client/mantalon_client.js',
+            dest: 'assets',
+          },
+        ],
+      }),
+  
     ],
 
     build: {
