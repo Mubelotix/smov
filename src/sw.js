@@ -12,11 +12,29 @@ self.addEventListener("fetch", (event) => {
     searchParams.delete("mantalon");
     url.search = searchParams.toString();
 
+    let newHeaders = new Headers();
+    for (let [key, value] of event.request.headers.entries()) {
+        newHeaders.append(key, value);
+    }
+    newHeaders.append("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36");
+    newHeaders.append("Origin", url.origin);
+    newHeaders.append("Referer", url.origin);
+    newHeaders.append("Sec-Ch-Ua", '"Brave";v="129", "Not=A?Brand";v="8", "Chromium";v="129"');
+    newHeaders.append("Sec-Ch-Ua-Mobile", "?0");
+    newHeaders.append("Sec-Ch-Ua-Platform", "Linux");
+    newHeaders.append("Sec-Fetch-Mode", "navigate");
+    newHeaders.append("Sec-Fetch-Site", "none");
+    newHeaders.append("Sec-Fetch-User", "?1");
+    newHeaders.append("Sec-GPC", "1");
+    newHeaders.append("Cache-Control", "no-cache");
+    newHeaders.append("Pragma", "no-cache");
+    newHeaders.append("Accept-Language", "en-US,en;q=0.9");
+
     console.log("Fetch intercepted for:", url);
     event.respondWith(
         self.proxiedFetch(url, {
             method: event.request.method,
-            headers: event.request.headers,
+            headers: newHeaders,
             body: event.request.body,
         })
             .then((response) => {
