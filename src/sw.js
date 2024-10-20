@@ -16,19 +16,19 @@ self.addEventListener("fetch", (event) => {
     for (let [key, value] of event.request.headers.entries()) {
         newHeaders.append(key, value);
     }
-    newHeaders.append("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36");
-    newHeaders.append("Origin", url.origin);
-    newHeaders.append("Referer", url.origin);
-    newHeaders.append("Sec-Ch-Ua", '"Brave";v="129", "Not=A?Brand";v="8", "Chromium";v="129"');
-    newHeaders.append("Sec-Ch-Ua-Mobile", "?0");
-    newHeaders.append("Sec-Ch-Ua-Platform", "Linux");
-    newHeaders.append("Sec-Fetch-Mode", "navigate");
-    newHeaders.append("Sec-Fetch-Site", "none");
-    newHeaders.append("Sec-Fetch-User", "?1");
-    newHeaders.append("Sec-GPC", "1");
-    newHeaders.append("Cache-Control", "no-cache");
-    newHeaders.append("Pragma", "no-cache");
-    newHeaders.append("Accept-Language", "en-US,en;q=0.9");
+    newHeaders.set("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36");
+    newHeaders.set("Origin", url.origin);
+    newHeaders.set("Referer", url.origin);
+    newHeaders.set("Sec-Ch-Ua", '"Brave";v="129", "Not=A?Brand";v="8", "Chromium";v="129"');
+    newHeaders.set("Sec-Ch-Ua-Mobile", "?0");
+    newHeaders.set("Sec-Ch-Ua-Platform", "Linux");
+    newHeaders.set("Sec-Fetch-Mode", "navigate");
+    newHeaders.set("Sec-Fetch-Site", "none");
+    newHeaders.set("Sec-Fetch-User", "?1");
+    newHeaders.set("Sec-GPC", "1");
+    newHeaders.set("Cache-Control", "no-cache");
+    newHeaders.set("Pragma", "no-cache");
+    newHeaders.set("Accept-Language", "en-US,en;q=0.9");
 
     console.log("Fetch intercepted for:", url);
     event.respondWith(
