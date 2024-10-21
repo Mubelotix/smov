@@ -55,6 +55,8 @@ export function makeLoadBalancedSimpleProxyFetcher() {
   return fetcher;
 }
 
+// The maps need to be copied to src/sw.js
+
 const headerMap: Record<string, string> = {
   cookie: 'X-Cookie',
   referer: 'X-Referer',

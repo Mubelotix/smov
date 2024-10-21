@@ -1,5 +1,17 @@
 var PROXY_URL = undefined;
 
+const requestHeaderMap = {
+    'x-cookie': 'cookie',
+    'x-referer': 'referer',
+    'x-origin': 'origin',
+    'x-user-agent': 'user-agent',
+    'x-x-real-ip': 'x-real-ip',
+};
+
+const responseHeaderMap = {
+    'x-mantalon-set-cookie': 'x-set-cookie',
+};
+
 self.addEventListener("fetch", (event) => {
     let url = new URL(event.request.url);
     let searchParams = new URLSearchParams(url.search);
@@ -14,7 +26,11 @@ self.addEventListener("fetch", (event) => {
 
     let newHeaders = new Headers();
     for (let [key, value] of event.request.headers.entries()) {
-        newHeaders.append(key, value);
+        if (requestHeaderMap[key.toLowerCase()]) {
+            newHeaders.append(requestHeaderMap[key.toLowerCase()], value);
+        } else {
+            newHeaders.append(key, value);
+        }
     }
     newHeaders.set("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36");
     newHeaders.set("Origin", url.origin);
@@ -38,29 +54,27 @@ self.addEventListener("fetch", (event) => {
             body: event.request.body,
         })
             .then((response) => {
-                // If that is a redirect, we need to update the location header
-                if (response.headers.has("location")) {
-                    let location = response.headers.get("location");
-                    if (location.includes("?")) {
-                        location += "&mantalon=true";
+                let newRespHeaders = new Headers();
+                for (let [key, value] of response.headers.entries()) {
+                    if (responseHeaderMap[key.toLowerCase()]) {
+                        newRespHeaders.append(responseHeaderMap[key.toLowerCase()], value);
+                    } else if (key.toLowerCase() === 'location') {
+                        if (value.includes("?")) {
+                            value += "&mantalon=true";
+                        } else {
+                            value += "?mantalon=true";
+                        }
+                        newRespHeaders.append(key, value);
                     } else {
-                        location += "?mantalon=true";
-                    }
-
-                    let newRespHeaders = new Headers();
-                    for (let [key, value] of response.headers.entries()) {
                         newRespHeaders.append(key, value);
                     }
-                    newRespHeaders.set("location", location);
-
-                    return new Response(response.body, {
-                        status: response.status,
-                        headers: newRespHeaders,
-                    });
                 }
 
                 // Return the response from proxiedFetch if successful
-                return response;
+                return new Response(response.body, {
+                    status: response.status,
+                    headers: newRespHeaders,
+                });
             })
             .catch((error) => {
                 console.error("Proxied fetch failed:", error);
